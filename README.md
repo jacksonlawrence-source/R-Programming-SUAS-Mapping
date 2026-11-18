@@ -44,11 +44,33 @@ R tests grid-aligned squares for full containment in the labeled surface and map
 
 The SIFT Low demo used three manually traced surfaces, a 10 m square, 3 m of clearance, and a 2 m grid. Two surfaces yielded candidates. The south lawn ranked first at 5.83 m from the synthetic mannequin, followed by the west meadow at 105.82 m. The pond margin was too narrow. The demo parameters are for testing. The current analysis uses visible, manually mapped features and horizontal clearances. Terrain slope, surface condition, and obstacle heights still need separate validation. The demo annotation layers and outputs stay local with the flight data.
 
+## Run the complete workflow
+
+Install the additional R packages with `install.packages(c("jsonlite", "curl"))`. The runner calls the image-preparation and candidate-screening scripts and writes the map, ranked CSV, and `run-report.json` to a new output directory. Use surface and obstacle layers drawn for the same flight.
+
+For a live run, start WebODM with a processing node available. Use the project ID from its project URL and set `WEBODM_TOKEN`, or set `WEBODM_USERNAME` and `WEBODM_PASSWORD` for a local project account. These can be set in an untracked `.Renviron` file. The runner defaults to `http://127.0.0.1:29800`. Set `WEBODM_URL` if your installation uses another local port or an HTTPS origin. The [WebODM task API](https://docs.webodm.org/api/task/) supplies the task status and downloadable orthophoto.
+
+```sh
+Rscript 04_run_mapping.R webodm PROJECT_ID "flight.zip" "surfaces.gpkg" "obstacles.gpkg" LONGITUDE LATITUDE 10 3 2 "outputs/live-run"
+```
+
+The live path submits the tracked SIFT Low settings, uploads the JPEGs in batches, waits for processing, and downloads the GeoTIFF. It writes the WebODM task ID when the task is created so you can inspect an interrupted run in WebODM.
+
+For a class demo with a saved orthophoto, use the same flight ZIP and its exported GeoTIFF. Saved mode measures the preparation and R output stages and records the WebODM timing fields as null.
+
+```sh
+Rscript 04_run_mapping.R saved "odm_orthophoto.tif" "flight.zip" "surfaces.gpkg" "obstacles.gpkg" LONGITUDE LATITUDE 10 3 2 "outputs/saved-run" "test-boundary.gpkg"
+```
+
+The optional last argument in either mode is a single test-boundary polygon or multipolygon. The report gives coverage within that boundary using the centres of mapped pixels. Omit the boundary to report the whole mapped footprint.
+
+The saved SIFT Low replay used the 372 JPEGs already extracted from the original flight archive. R exported two ranked candidates and measured **87.83%** coverage within a **49,500 m²** rectangular test boundary drawn for the demo. The live API sequence was exercised against a local mock service. A fresh WebODM stitch requires authenticated access to the local project.
+
 ## Class project milestones
 
 1. **Complete.** Load the SIFT Low GeoTIFF in R, project a synthetic mannequin point, and export the annotated map.
 2. **Complete for the class demo.** Screen manually traced surfaces and rank qualifying footprints by distance to the mannequin. Add a slope check if suitable elevation data become available.
-3. Connect image preparation, WebODM submission and retrieval, spatial analysis, and exports. Produce an annotated map and a ranked candidate report with coordinates. Reproduce one complete run and record time to export and coverage within the test boundary.
+3. **Runner implemented and saved-flight replay verified.** Rehearse one authenticated live run and record its full time to export.
 4. Package the R scripts, figures, and presentation. Document the package setup and provide instructor-accessible download instructions for the flight ZIP and any required large data.
 
 Real mannequin detection and an A8 Mini/HM30 field rehearsal are subsequent AAV milestones.
