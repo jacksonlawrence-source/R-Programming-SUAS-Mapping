@@ -17,7 +17,7 @@ The SIFT benchmark used the same 372 images. Each row represents one run, and th
 
 ## Reproduce the mannequin map
 
-Install the R package with `install.packages("terra")`. The first script uses base R and the second uses `terra`. The map was verified with R 4.6.1 and terra 1.9-50.
+Install the R package with `install.packages("terra")`. Image preparation uses base R. The mapping and screening scripts use `terra` and were verified with R 4.6.1 and terra 1.9-50.
 
 - **Flight imagery** comes from AAV's 372-image Gremsy VIO flight ZIP. The project copy is `drive-download-20261118T015500Z-1-001.zip`. The image-preparation script takes the path to the ZIP as its only argument.
 - **Orthophoto** comes from AAV OneDrive under `SUAS MAPPING/WebODM Test Results`. Use the **Incremental – sift – Low quality – 3m 53s processing** run and its `odm_orthophoto/odm_orthophoto.tif` file. It has 6,237 by 3,447 pixels in WGS 84 / UTM Zone 17N (EPSG:32617). AAV OneDrive access is required for the test data. Before submitting, provide the instructor with an accessible copy or download links.
@@ -30,10 +30,24 @@ Rscript 02_plot_mannequin.R "path/to/odm_orthophoto.tif" LONGITUDE LATITUDE "out
 
 The script projects the input into the map CRS, checks for mapped pixels at the point, and writes a PNG with the point labeled as synthetic. The demo run was verified against the selected SIFT Low GeoTIFF, including rejection of points in an unmapped gap or outside the image.
 
+## Screen and rank landing-zone candidates
+
+Trace plausible landing surfaces and visible obstacles as two separate polygon layers over the orthophoto. Export each layer as a georeferenced, single-layer GeoPackage or GeoJSON. Give each plausible surface a unique `surface_id`. Include the visible features that should be excluded from the landing footprint, such as water, trees, structures, or parked vehicles.
+
+Run from the project root using a projected WebODM GeoTIFF with metre units. The three distances after longitude and latitude are the square footprint width, minimum obstacle clearance, and search-grid spacing, in metres.
+
+```sh
+Rscript 03_rank_landing_zones.R "path/to/odm_orthophoto.tif" "data/processed/demo-surfaces.gpkg" "data/processed/demo-obstacles.gpkg" LONGITUDE LATITUDE 10 3 2 "outputs/landing-zones"
+```
+
+R tests grid-aligned squares for full containment in the labeled surface and mapped pixels. It measures clearance from the square edge to the nearest mapped obstacle and keeps the valid square closest to the mannequin on each surface. A finer grid samples more positions. The output directory contains an annotated `landing-zone-map.png` and a `landing-zone-candidates.csv` with ranks, coordinates, distances, and clearances. A run with zero candidates writes a header-only CSV.
+
+The SIFT Low demo used three manually traced surfaces, a 10 m square, 3 m of clearance, and a 2 m grid. Two surfaces yielded candidates. The south lawn ranked first at 5.83 m from the synthetic mannequin, followed by the west meadow at 105.82 m. The pond margin was too narrow. The demo parameters are for testing. The current analysis uses visible, manually mapped features and horizontal clearances. Terrain slope, surface condition, and obstacle heights still need separate validation. The demo annotation layers and outputs stay local with the flight data.
+
 ## Class project milestones
 
 1. **Complete.** Load the SIFT Low GeoTIFF in R, project a synthetic mannequin point, and export the annotated map.
-2. Screen potentially suitable surfaces for a configurable landing footprint and clearance from mapped obstacles. Rank qualifying candidates by distance to the mannequin. Document the limits of RGB imagery and add a slope check if suitable elevation data become available.
+2. **Complete for the class demo.** Screen manually traced surfaces and rank qualifying footprints by distance to the mannequin. Add a slope check if suitable elevation data become available.
 3. Connect image preparation, WebODM submission and retrieval, spatial analysis, and exports. Produce an annotated map and a ranked candidate report with coordinates. Reproduce one complete run and record time to export and coverage within the test boundary.
 4. Package the R scripts, figures, and presentation. Document the package setup and provide instructor-accessible download instructions for the flight ZIP and any required large data.
 
