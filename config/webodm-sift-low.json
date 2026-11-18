@@ -1,0 +1,14 @@
+{
+  "sfm-algorithm": "incremental",
+  "feature-type": "sift",
+  "feature-quality": "low",
+  "fast-orthophoto": true,
+  "skip-3dmodel": true,
+  "use-3dmesh": false,
+  "auto-boundary": true,
+  "orthophoto-resolution": 5,
+  "rolling-shutter": false,
+  "matcher-neighbors": 0,
+  "pc-quality": "lowest",
+  "max-concurrency": 16
+}

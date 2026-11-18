@@ -1,0 +1,9 @@
+/.Rproj.user/
+/.R-library/
+/.Rhistory
+/.RData
+/.Renviron
+/.env
+/data/raw/
+/data/processed/
+/outputs/
