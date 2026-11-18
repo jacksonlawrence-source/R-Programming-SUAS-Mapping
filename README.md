@@ -71,7 +71,7 @@ The saved SIFT Low replay used the 372 JPEGs already extracted from the original
 1. **Complete.** Load the SIFT Low GeoTIFF in R, project a synthetic mannequin point, and export the annotated map.
 2. **Complete for the class demo.** Screen manually traced surfaces and rank qualifying footprints by distance to the mannequin. Add a slope check if suitable elevation data become available.
 3. **Runner implemented and saved-flight replay verified.** Rehearse one authenticated live run and record its full time to export.
-4. Package the R scripts, figures, and presentation. Document the package setup and provide instructor-accessible download instructions for the flight ZIP and any required large data.
+4. **Presentation and replay package prepared.** Arrange instructor access and complete the live presentation or Canvas submission.
 
 Real mannequin detection and an A8 Mini/HM30 field rehearsal are subsequent AAV milestones.
 
@@ -83,4 +83,12 @@ Real mannequin detection and an A8 Mini/HM30 field rehearsal are subsequent AAV 
 
 ## GitHub workflow
 
-Track the R scripts, WebODM preset, setup and data access instructions, small figures and result tables, and presentation in the project repository. Keep local raw imagery, full-resolution GeoTIFFs, and machine-specific configuration out of version control. Record a shareable data source and exact input names here before submission.
+Track the R scripts, WebODM preset, setup instructions, and non-sensitive results in the project repository. Share the flight imagery, georeferenced materials, and class presentation through instructor-restricted access.
+
+## Class submission package
+
+- **Presentation** is `SUAS-Mapping-R-Final.pptx`. It has timed speaker notes for a 10-minute talk and a two-minute walkthrough of the footprint containment and obstacle clearance code in `03_rank_landing_zones.R`.
+- **R scripts** are the four numbered `.R` files in this repository. The saved demo requires R, `terra`, and `jsonlite`. Live WebODM also requires `curl` and local project credentials.
+- **Replay data** are bundled in `SUAS-Mapping-Replay.zip` with the numbered scripts, a platform-neutral command in `REPLAY.md`, and the inputs under `inputs/`. These are the 372-image AAV Gremsy VIO flight archive (`flight.zip`), the WebODM SIFT Low `odm_orthophoto.tif`, and three GeoPackages containing the manually traced surfaces, visible obstacles, and demo boundary. The archive reproduces the saved replay without a WebODM account.
+
+The presentation contains the flight imagery, so it and the replay archive are available locally for restricted sharing with the instructor. The GitHub repository provides the source. Instructor download access and the live or recorded submission still need to be arranged.
